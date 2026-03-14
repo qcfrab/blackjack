@@ -20,5 +20,9 @@ module Blackjack
         else rank.to_i
       end
     end
+
+    def ace?
+      rank == 'A'
+    end
   end
 end
