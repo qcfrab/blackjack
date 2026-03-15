@@ -13,6 +13,8 @@ module Blackjack
       @player_hand = Hand.new
       @dealer_hand = Hand.new
       @dealer_strategy = StandardStrategy.new
+      @bankroll = 1000
+      @current_bet = 0
     end
 
     def start_deal
@@ -62,22 +64,45 @@ module Blackjack
       player_score = @player_hand.value
       dealer_score = @dealer_hand.value
 
-      puts "---"
-      puts "Финальный счет:"
-      puts "Игрок: #{player_score}"
-      puts "Дилер: #{dealer_score}"
-      puts "---"
+      outcome = if player_score > 21
+                  :loss
+                elsif dealer_score > 21 || player_score > dealer_score
+                  :win
+                elsif player_score < dealer_score
+                  :loss
+                else
+                  :push
+                end
 
-      if player_score > 21
-        puts "У игрока перебор! Дилер победил."
-      elsif dealer_score > 21
-        puts "У дилера перебор! Игрок победил!"
-      elsif player_score == dealer_score
-        puts "Ничья!"
-      elsif player_score > dealer_score
-        puts "Игрок победил!"
-      else
-        puts "Дилер победил!"
+      results = {
+        win:  [1,  "Вы выиграли!"],
+        loss: [-1, "Дилер победил."],
+        push: [0,  "Ничья. Ставка возвращена."]
+      }
+
+      modifier, message = results[outcome]
+
+      @bankroll += (@current_bet * modifier)
+
+      puts "\n" + "=" * 20
+      puts "ФИНАЛ: Вы (#{player_score}) | Дилер (#{dealer_score})"
+      puts message
+      puts "Ваш новый баланс: $#{@bankroll}"
+      puts "=" * 20
+    end
+
+    def place_bet
+      loop do
+        puts "\nВаш баланс: $#{@bankroll}"
+        print "Сделайте ставку: $"
+        bet = gets.chomp.to_i
+
+        if bet > 0 && bet <= @bankroll
+          @current_bet = bet
+          break
+        else
+          puts "Неверная ставка. Сумма должна быть больше нуля и не превышать ваш баланс."
+        end
       end
     end
 
@@ -103,6 +128,7 @@ module Blackjack
       @dealer_strategy = selected_strategy
 
       puts "=== Добро пожаловать в Блэкджек! ==="
+      place_bet
       start_deal
 
       player_turn
