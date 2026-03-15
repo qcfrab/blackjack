@@ -23,15 +23,19 @@ module Blackjack
 
       first_dealer_card = @deck.draw
       @dealer_hand.add_card(first_dealer_card)
-      puts "Открытая карта дилера: #{first_dealer_card}"
+      puts "Открытая карта дилера:"
+      puts first_dealer_card.render
 
       @dealer_hand.add_card(@deck.draw)
     end
 
     def player_turn
       loop do
-        puts "Твои карты: #{@player_hand.cards.join(', ')}"
-        puts "Твои очки: #{@player_hand.value}"
+        puts "\n" + "="*30
+        puts "ВАШ ХОД"
+        display_cards(@player_hand)
+        puts "Очки: #{@player_hand.value}"
+        puts "="*30
 
         if @player_hand.value >= 21
           puts "Перебор!" if @player_hand.value > 21
@@ -43,9 +47,7 @@ module Blackjack
 
         case choice
         when "y"
-          new_card = @deck.draw
-          @player_hand.add_card(new_card)
-          puts "Вы вытянули: #{new_card}"
+          @player_hand.add_card(@deck.draw)
         when "n"
           break
         else
@@ -139,6 +141,16 @@ module Blackjack
       end
 
       determine_winner
+    end
+
+    private
+
+    def display_cards(hand)
+      rendered_cards = hand.cards.map { |card| card.render }
+
+      7.times do |i|
+        puts rendered_cards.map { |lines| lines[i] }.join(" ")
+      end
     end
   end
 end

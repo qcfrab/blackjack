@@ -24,5 +24,21 @@ module Blackjack
     def ace?
       rank == 'A'
     end
+
+    def render
+      color = (suit == '♥' || suit == '♦') ? "\e[31m" : "\e[37m"
+      reset = "\e[0m"
+      r = rank.ljust(2)
+
+      [
+        "┌─────────┐",
+        "│ #{r}      │",
+        "│         │",
+        "│    #{color}#{suit}#{reset}    │",
+        "│         │",
+        "│       #{r}│",
+        "└─────────┘"
+      ]
+    end
   end
 end
