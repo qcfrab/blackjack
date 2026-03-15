@@ -1,39 +1,54 @@
+
+---
+
 # Blackjack
 
-TODO: Delete this and the text below, and describe your gem
+Простая реализация игры в Блэкджек на Ruby. Проект демонстрирует применение принципов ООП, паттерна «Стратегия» для логики дилера и работу с консольной графикой.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/blackjack`. To experiment with that code, run `bin/console` for an interactive prompt.
+## Особенности
 
-## Installation
+* **Система стратегий:** Различное поведение дилера (осторожный, стандартный, рисковый).
+* **Консольный рендеринг:** Визуальное отображение карт с использованием ANSI-цветов.
+* **Логика тузов:** Автоматический пересчет веса туза (11 или 1) для предотвращения перебора.
+* **Система ставок:** Управление банкроллом игрока.
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+## Требования
 
-Install the gem and add to the application's Gemfile by executing:
+* Ruby 3.0 или выше.
+* Терминал с поддержкой ANSI-цветов (для корректного отображения мастей).
+
+## Установка
+
+Вы можете склонировать репозиторий:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+git clone https://github.com/qcfrab/blackjack.git
+cd blackjack
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+## Запуск игры
+
+Для начала игры просто запустите основной файл:
 
 ```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+ruby lib/blackjack/game.rb
 ```
 
-## Usage
+## Запуск всех тестов
+Из корневой директории проекта выполните:
 
-TODO: Write usage instructions here
+```bash
+ruby -Ilib:test test/test_helper.rb
+```
 
-## Development
+## Архитектура проекта
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Проект разделен на логические компоненты:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+* **`Card`** — Модель карты. Отвечает за вес и визуальное представление.
+* **`Deck`** — Колода из 52 карт с механизмом перемешивания.
+* **`Hand`** — Коллекция карт игрока или дилера с расчетом суммы очков.
+* **`Game`** — Главный контроллер игрового цикла, обработки ввода и ставок.
+* **`Strategies`** — Набор классов, определяющих, когда дилеру стоит брать карту, а когда остановиться.
 
-## Contributing
-
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/blackjack.
-
-## License
-
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+---
