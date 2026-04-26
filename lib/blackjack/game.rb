@@ -6,7 +6,7 @@ require_relative "strategies"
 
 module Blackjack
   class Game
-    attr_reader :player_hand, :dealer_hand, :deck
+    attr_reader :player_hand, :dealer_hand, :deck, :bankroll, :current_bet
 
     def initialize
       @deck = Deck.new
@@ -17,43 +17,55 @@ module Blackjack
       @current_bet = 0
     end
 
+    def set_strategy(choice)
+      @dealer_strategy = case choice.to_s
+                         when "2"
+                           Blackjack::CautiousStrategy.new
+                         when "3"
+                           Blackjack::RiskyStrategy.new
+                         else
+                           Blackjack::StandardStrategy.new
+                         end
+    end
+
+    def place_bet(amount)
+      if amount > 0 && amount <= @bankroll
+        @current_bet = amount
+        true
+      else
+        false
+      end
+    end
+
     def start_deal
       @player_hand.add_card(@deck.draw)
       @player_hand.add_card(@deck.draw)
 
       first_dealer_card = @deck.draw
       @dealer_hand.add_card(first_dealer_card)
-      puts "Открытая карта дилера:"
-      puts first_dealer_card.render
-
       @dealer_hand.add_card(@deck.draw)
+
+      {
+        player_score: @player_hand.value,
+        dealer_visible_card: first_dealer_card
+      }
     end
 
-    def player_turn
-      loop do
-        puts "\n" + "="*30
-        puts "ВАШ ХОД"
-        display_cards(@player_hand)
-        puts "Очки: #{@player_hand.value}"
-        puts "="*30
+    def hit
+      @player_hand.add_card(@deck.draw)
 
-        if @player_hand.value >= 21
-          puts "Перебор!" if @player_hand.value > 21
-          break
-        end
-
-        print "Взять еще карту? (y/n): "
-        choice = gets.chomp.downcase
-
-        case choice
-        when "y"
-          @player_hand.add_card(@deck.draw)
-        when "n"
-          break
-        else
-          puts "Неверный ввод. Пожалуйста, введите 'y' или 'n'."
-        end
+      if @player_hand.value > 21
+        :bust
+      elsif @player_hand.value == 21
+        :blackjack
+      else
+        :continue
       end
+    end
+
+    def stand
+      dealer_turn
+      determine_winner
     end
 
     def dealer_turn
@@ -86,76 +98,28 @@ module Blackjack
 
       @bankroll += (@current_bet * modifier)
 
-      puts "\n" + "=" * 20
-      puts "ФИНАЛ: Вы (#{player_score}) | Дилер (#{dealer_score})"
-      puts message
-      puts "Ваш новый баланс: $#{@bankroll}"
-      puts "=" * 20
+      {
+        player_score: player_score,
+        dealer_score: dealer_score,
+        message: message,
+        bankroll: @bankroll,
+        outcome: outcome
+      }
     end
 
-    def place_bet
-      loop do
-        puts "\nВаш баланс: $#{@bankroll}"
-        print "Сделайте ставку: $"
-        bet = gets.chomp.to_i
-
-        if bet > 0 && bet <= @bankroll
-          @current_bet = bet
-          break
-        else
-          puts "Неверная ставка. Сумма должна быть больше нуля и не превышать ваш баланс."
-        end
-      end
+    def render_hand(hand)
+      "Карты: #{hand.cards.map(&:to_s).join(' ')} (Очки: #{hand.value})"
     end
-
-    def play
-      puts "=== Настройка игры ==="
-      puts "Выберите характер дилера:"
-      puts "1 - Стандартный"
-      puts "2 - Осторожный"
-      puts "3 - Рисковый"
-      print "Ваш выбор (1-3): "
-
-      choice = gets.chomp
-
-      selected_strategy = case choice
-                          when "2"
-                            Blackjack::CautiousStrategy.new
-                          when "3"
-                            Blackjack::RiskyStrategy.new
-                          else
-                            Blackjack::StandardStrategy.new
-                          end
-
-      @dealer_strategy = selected_strategy
-
-      puts "=== Добро пожаловать в Блэкджек! ==="
-      place_bet
-      start_deal
-
-      player_turn
-
-      if @player_hand.value <= 21
-        puts "\nХод дилера..."
-        dealer_turn
-      end
-
-      determine_winner
-    end
-
-    private
 
     def display_cards(hand)
       rendered_cards = hand.cards.map { |card| card.render }
+      output = []
 
       7.times do |i|
-        puts rendered_cards.map { |lines| lines[i] }.join(" ")
+        output << rendered_cards.map { |lines| lines[i] }.join(" ")
       end
+
+      output.join("\n")
     end
   end
-end
-
-if __FILE__ == $0
-  game = Blackjack::Game.new
-  game.play
 end
