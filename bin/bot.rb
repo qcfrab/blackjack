@@ -31,10 +31,9 @@ class BlackjackBot
   private
 
   def route_message(message)
-    case message
-    when Telegram::Bot::Types::CallbackQuery
+    if message.respond_to?(:data) && !message.data.nil?
       handle_callback(message)
-    when Telegram::Bot::Types::Message
+    elsif message.respond_to?(:text)
       handle_text(message)
     end
   end
