@@ -60,7 +60,7 @@ class GameTest < Minitest::Test
     @game.stub :gets, "50\n" do
       @game.stub :print, nil do
         @game.stub :puts, nil do
-          @game.place_bet
+          @game.place_bet(50)
         end
       end
     end

@@ -7,25 +7,15 @@ require_relative "strategies"
 module Blackjack
   class Game
     attr_reader :player_hand, :dealer_hand, :deck, :bankroll, :current_bet
+    attr_accessor :dealer_strategy
 
-    def initialize(starting_bankroll = 1000)
+    def initialize(starting_bankroll = 1000, dealer_strategy = Blackjack::DealerStrategy.new(17))
       @deck = Deck.new
       @player_hand = Hand.new
       @dealer_hand = Hand.new
-      @dealer_strategy = StandardStrategy.new
+      @dealer_strategy = dealer_strategy
       @bankroll = starting_bankroll
       @current_bet = 0
-    end
-
-    def set_strategy(choice)
-      @dealer_strategy = case choice.to_s
-                         when "2"
-                           Blackjack::CautiousStrategy.new
-                         when "3"
-                           Blackjack::RiskyStrategy.new
-                         else
-                           Blackjack::StandardStrategy.new
-                         end
     end
 
     def place_bet(amount)
