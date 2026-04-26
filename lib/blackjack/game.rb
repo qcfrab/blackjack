@@ -8,12 +8,12 @@ module Blackjack
   class Game
     attr_reader :player_hand, :dealer_hand, :deck, :bankroll, :current_bet
 
-    def initialize
+    def initialize(starting_bankroll = 1000)
       @deck = Deck.new
       @player_hand = Hand.new
       @dealer_hand = Hand.new
       @dealer_strategy = StandardStrategy.new
-      @bankroll = 1000
+      @bankroll = starting_bankroll
       @current_bet = 0
     end
 
@@ -38,6 +38,9 @@ module Blackjack
     end
 
     def start_deal
+      @player_hand = Hand.new
+      @dealer_hand = Hand.new
+
       @player_hand.add_card(@deck.draw)
       @player_hand.add_card(@deck.draw)
 
@@ -108,7 +111,7 @@ module Blackjack
     end
 
     def render_hand(hand)
-      "Карты: #{hand.cards.map(&:to_s).join(' ')} (Очки: #{hand.value})"
+      "#{hand.cards.map(&:to_s).join(' ')} (Очки: #{hand.value})"
     end
 
     def display_cards(hand)
