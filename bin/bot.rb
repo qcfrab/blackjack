@@ -101,7 +101,7 @@ class BlackjackBot
         "Ваш ход:"
       send_message(chat_id, text, reply_markup: hit_stand_keyboard)
     else
-      send_message(chat_id, "Ошибка: ставка должна быть не больше $#{game.bankroll}")
+      send_message(chat_id, "Ошибка: ставка должна быть не больше $#{game.bankroll} и больше $0")
     end
   end
 
