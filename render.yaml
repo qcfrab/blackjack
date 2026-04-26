@@ -1,0 +1,9 @@
+services:
+  - type: worker
+    name: blackjack-bot
+    env: ruby
+    buildCommand: bundle install
+    startCommand: bundle exec ruby bin/bot.rb
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false

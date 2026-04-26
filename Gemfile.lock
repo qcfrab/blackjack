@@ -117,6 +117,7 @@ GEM
 
 PLATFORMS
   x64-mingw-ucrt
+  x86_64-linux
 
 DEPENDENCIES
   blackjack!
@@ -126,6 +127,9 @@ DEPENDENCIES
   rake (~> 13.0)
   rubocop (~> 1.21)
   telegram-bot-ruby
+
+RUBY VERSION
+   ruby 3.4.8p72
 
 BUNDLED WITH
    2.6.9
