@@ -58,18 +58,18 @@ class BlackjackBot
 
   def handle_text(message)
     chat_id = message.chat.id
-    text = message.text
+    text = message.text.to_s.strip
 
     case text
     when '/start', 'Новая игра'
       start_new_game(chat_id)
     when 'Сменить стратегию'
       show_strategy_menu(chat_id)
-    when /(\d+)/
-      amount = Regexp.last_match(1).to_i
+    when /^\d+$/
+      amount = text.to_i
       place_bet(chat_id, amount)
     else
-      send_message(chat_id, "Напишите /start или сумму ставки (числом).")
+      send_message(chat_id, "Некорректный ввод. Пожалуйста, отправьте только число для ставки.")
     end
   end
 
